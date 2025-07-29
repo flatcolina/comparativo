@@ -1,17 +1,23 @@
 
 import requests
 import openpyxl
+import sys
 
 def main():
-    checkin = input("Digite a data de check-in (YYYY-MM-DD): ").strip()
-    checkout = input("Digite a data de check-out (YYYY-MM-DD): ").strip()
-    adultos = input("Número de adultos: ").strip()
-    criancas = input("Número de crianças: ").strip()
+    if len(sys.argv) != 5:
+        print("Uso correto:")
+        print("python main.py <checkin> <checkout> <adultos> <criancas>")
+        sys.exit(1)
+
+    checkin = sys.argv[1]
+    checkout = sys.argv[2]
+    adultos = sys.argv[3]
+    criancas = sys.argv[4]
 
     with open("ids.txt") as f:
         ids = [line.strip() for line in f if line.strip()]
 
-    # Criar workbook
+    # Criar planilha
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = "Resultados"
@@ -34,9 +40,9 @@ def main():
         except Exception as e:
             print(f"❌ Erro ao consultar {pid}: {e}")
 
-    # Salvar XLSX
+    # Salvar planilha
     workbook.save("resultado_busca.xlsx")
-    print("Arquivo 'resultado_busca.xlsx' gerado com sucesso!")
+    print("📄 Arquivo 'resultado_busca.xlsx' gerado com sucesso!")
 
 if __name__ == "__main__":
     main()
