@@ -21,20 +21,27 @@ def main():
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = "Resultados"
-    sheet.append(["ID Propriedade", "Nome Propriedade", "Valor", "Link"])
+    sheet.append(["ID Propriedade", "Nome Propriedade", "Valor", "Link Airbnb", "Link API"])
 
     for pid in ids:
-        url = (
+        airbnb_url = (
+            f"https://www.airbnb.com.br/rooms/{pid}"
+            f"?check_in={checkin}&check_out={checkout}"
+            f"&adults={adultos}&children={criancas}&infants=0&pets=0&source_impression_id=cli_app"
+        )
+
+        api_url = (
             f"https://comparativo-production.up.railway.app/executar"
             f"?checkin={checkin}&checkout={checkout}&hospedes={adultos}&criancas={criancas}&id={pid}"
         )
 
         print("=" * 60)
         print(f"➡️  Verificando propriedade: {pid}")
-        print(f"🔗 Acessando: {url}")
+        print(f"🔗 Link Airbnb: {airbnb_url}")
+        print(f"📡 Chamando API: {api_url}")
 
         try:
-            response = requests.get(url)
+            response = requests.get(api_url)
             data = response.json()
 
             nome = data.get("nome", "N/A")
@@ -42,7 +49,7 @@ def main():
             print(f"✅ Nome: {nome}")
             print(f"💲 Valor: {valor}")
 
-            sheet.append([pid, nome, valor, url])
+            sheet.append([pid, nome, valor, airbnb_url, api_url])
         except Exception as e:
             print(f"❌ Erro ao consultar {pid}: {e}")
 
