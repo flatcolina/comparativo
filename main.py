@@ -21,28 +21,34 @@ def main():
     workbook = openpyxl.Workbook()
     sheet = workbook.active
     sheet.title = "Resultados"
-    sheet.append(["ID Propriedade", "Nome Propriedade", "Valor"])
+    sheet.append(["ID Propriedade", "Nome Propriedade", "Valor", "Link"])
 
     for pid in ids:
         url = (
             f"https://comparativo-production.up.railway.app/executar"
             f"?checkin={checkin}&checkout={checkout}&hospedes={adultos}&criancas={criancas}&id={pid}"
         )
-        print(f"➡️  Verificando propriedade {pid}")
+
+        print("=" * 60)
+        print(f"➡️  Verificando propriedade: {pid}")
+        print(f"🔗 Acessando: {url}")
+
         try:
             response = requests.get(url)
             data = response.json()
 
             nome = data.get("nome", "N/A")
             valor = data.get("valor", "N/A")
-            print(f"✅ {nome} - {valor}")
-            sheet.append([pid, nome, valor])
+            print(f"✅ Nome: {nome}")
+            print(f"💲 Valor: {valor}")
+
+            sheet.append([pid, nome, valor, url])
         except Exception as e:
             print(f"❌ Erro ao consultar {pid}: {e}")
 
     # Salvar planilha
     workbook.save("resultado_busca.xlsx")
-    print("📄 Arquivo 'resultado_busca.xlsx' gerado com sucesso!")
+    print("\n📄 Arquivo 'resultado_busca.xlsx' gerado com sucesso!")
 
 if __name__ == "__main__":
     main()
